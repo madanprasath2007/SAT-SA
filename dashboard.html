@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SAT-SA — Supervisory Analytics Tool for SOC Assessment</title>
+<meta name="description" content="NCIIPC/NTRO compliant offline supervisory analytics platform for SOC assessment" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0e1a;--bg2:#0f1629;--card:#131c30;--card-h:#1a2540;
+  --border:#1e2d47;--border-a:#2a4070;
+  --blue:#3b82f6;--cyan:#06b6d4;--purple:#8b5cf6;
+  --green:#10b981;--amber:#f59e0b;--red:#ef4444;--orange:#f97316;
+  --t1:#e2e8f0;--t2:#94a3b8;--t3:#475569;
+  --r-sm:6px;--r-md:10px;
+}
+html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);font-size:14px}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border-a);border-radius:3px}
+
+.shell{display:grid;grid-template-columns:220px 1fr;grid-template-rows:56px 1fr;height:100vh;overflow:hidden}
+
+/* Topbar */
+.topbar{grid-column:1/-1;display:flex;align-items:center;gap:10px;padding:0 20px;
+  background:var(--bg2);border-bottom:1px solid var(--border);z-index:100}
+.logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;color:var(--cyan)}
+.logo-icon{width:28px;height:28px;background:linear-gradient(135deg,#1e3a5f,#0f2540);
+  border:1px solid var(--blue);border-radius:6px;display:flex;align-items:center;
+  justify-content:center;font-size:14px}
+.nciipc-badge{background:linear-gradient(135deg,#1e3a5f,#0f2540);border:1px solid var(--blue);
+  border-radius:4px;padding:2px 7px;font-size:10px;font-weight:700;color:var(--blue);letter-spacing:1px}
+.topbar-sub{font-size:11px;color:var(--t3)}
+.spacer{flex:1}
+.status-pill{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--t2);
+  background:var(--card);border:1px solid var(--border);border-radius:100px;padding:4px 10px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--green);
+  box-shadow:0 0 6px var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--r-sm);
+  border:none;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;font-family:inherit}
+.btn-primary{background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;box-shadow:0 2px 12px #2563eb33}
+.btn-primary:hover{background:linear-gradient(135deg,#3b82f6,#2563eb);transform:translateY(-1px)}
+.btn-ghost{background:var(--card);color:var(--t2);border:1px solid var(--border)}
+.btn-ghost:hover{border-color:var(--border-a);color:var(--t1)}
+
+/* Sidebar */
+.sidebar{background:var(--bg2);border-right:1px solid var(--border);
+  padding:14px 10px;display:flex;flex-direction:column;gap:3px;overflow-y:auto}
+.nav-label{font-size:10px;font-weight:600;letter-spacing:1.2px;color:var(--t3);
+  padding:10px 10px 4px;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--r-sm);
+  cursor:pointer;color:var(--t2);font-size:13px;font-weight:500;transition:all .15s;
+  border:1px solid transparent}
+.nav-item:hover{background:var(--card);color:var(--t1);border-color:var(--border)}
+.nav-item.active{background:linear-gradient(135deg,#1e3a5f22,#0f254011);color:var(--blue);border-color:#3b82f644}
+.nav-icon{font-size:15px;width:18px;text-align:center}
+
+/* Main */
+.main{overflow-y:auto;padding:20px 24px;display:flex;flex-direction:column;gap:18px}
+
+/* Page header */
+.ph{display:flex;align-items:flex-start;justify-content:space-between}
+.ph-title{font-size:19px;font-weight:700}
+.ph-sub{font-size:12px;color:var(--t2);margin-top:2px}
+
+/* KPI grid */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:var(--r-md);
+  padding:16px;position:relative;overflow:hidden;transition:all .2s;cursor:default}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.kpi.blue::before{background:linear-gradient(90deg,var(--blue),var(--cyan))}
+.kpi.red::before{background:linear-gradient(90deg,var(--red),#b91c1c)}
+.kpi.amber::before{background:linear-gradient(90deg,var(--amber),#d97706)}
+.kpi.green::before{background:linear-gradient(90deg,var(--green),#059669)}
+.kpi.purple::before{background:linear-gradient(90deg,var(--purple),#7c3aed)}
+.kpi.cyan::before{background:linear-gradient(90deg,var(--cyan),var(--blue))}
+.kpi:hover{border-color:var(--border-a);transform:translateY(-2px);box-shadow:0 4px 24px #00000040}
+.kpi-label{font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.8px}
+.kpi-value{font-size:28px;font-weight:800;color:var(--t1);margin:6px 0 2px;line-height:1}
+.kpi-sub{font-size:11px;color:var(--t2)}
+
+/* Cards */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden}
+.card-hdr{display:flex;align-items:center;justify-content:space-between;
+  padding:13px 18px;border-bottom:1px solid var(--border)}
+.card-title{font-size:13px;font-weight:600;color:var(--t1);display:flex;align-items:center;gap:7px}
+.card-body{padding:16px 18px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+/* Badges */
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:100px;
+  font-size:10px;font-weight:700;letter-spacing:.5px}
+.b-critical{background:#ef444420;color:var(--red);border:1px solid #ef444440}
+.b-high{background:#f9731620;color:var(--orange);border:1px solid #f9731640}
+.b-medium{background:#eab30820;color:var(--amber);border:1px solid #eab30840}
+.b-low{background:#22c55e20;color:#22c55e;border:1px solid #22c55e40}
+
+/* Feed */
+.feed-item{padding:11px 0;border-bottom:1px solid var(--border);display:flex;gap:11px;align-items:flex-start}
+.feed-item:last-child{border-bottom:none}
+.feed-icon{width:30px;height:30px;border-radius:var(--r-sm);display:flex;align-items:center;
+  justify-content:center;flex-shrink:0;font-size:13px}
+.fi-eg{background:#f9731620}.fi-ns{background:#8b5cf620}
+.feed-body{flex:1;min-width:0}
+.feed-type{font-size:12px;font-weight:600;color:var(--t1)}
+.feed-desc{font-size:11px;color:var(--t2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.feed-meta{display:flex;gap:8px;margin-top:4px;align-items:center;flex-wrap:wrap}
+.feed-cse{font-size:10px;color:var(--blue);font-family:'JetBrains Mono',monospace;font-weight:600}
+.feed-time{font-size:10px;color:var(--t3)}
+.feed-score{font-size:11px;color:var(--t2);font-family:'JetBrains Mono',monospace;flex-shrink:0}
+
+/* Table */
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;
+  color:var(--t3);padding:10px 12px;text-align:left;border-bottom:1px solid var(--border);
+  background:var(--bg2);white-space:nowrap}
+.tbl td{padding:10px 12px;font-size:12px;color:var(--t2);border-bottom:1px solid #1e2d4788}
+.tbl tr:hover td{background:var(--card-h);color:var(--t1)}
+.mono{font-family:'JetBrains Mono',monospace;font-size:11px}
+
+/* Heatmap */
+.hm-table{border-collapse:collapse;min-width:100%}
+.hm-table th{font-size:9px;font-weight:700;color:var(--t3);padding:6px 4px;text-align:center;max-width:80px;word-wrap:break-word}
+.hm-table td.cse-label{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--blue);font-weight:600;padding:4px 12px;white-space:nowrap}
+.hm-cell{border-radius:3px;display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:700;width:50px;height:26px;margin:2px auto;transition:transform .1s;cursor:help}
+.hm-cell:hover{transform:scale(1.12)}
+
+/* Filters */
+.filter-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.sel{background:var(--card);border:1px solid var(--border);color:var(--t2);
+  border-radius:var(--r-sm);padding:6px 10px;font-size:12px;outline:none;cursor:pointer;font-family:inherit}
+.sel:focus{border-color:var(--blue);color:var(--t1)}
+.sel option{background:var(--card)}
+
+/* Pages */
+.page{display:none;flex-direction:column;gap:18px}
+.page.active{display:flex}
+
+/* Empty */
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:40px;color:var(--t3);gap:8px;text-align:center;font-size:13px}
+
+/* Toast */
+.toast-tray{position:fixed;bottom:20px;right:20px;display:flex;flex-direction:column;gap:8px;z-index:9999}
+.toast{padding:11px 16px;border-radius:var(--r-sm);font-size:13px;font-weight:500;
+  display:flex;align-items:center;gap:8px;box-shadow:0 4px 24px #00000060;
+  animation:slideIn .2s ease;max-width:380px;cursor:pointer}
+@keyframes slideIn{from{transform:translateX(110%);opacity:0}}
+.t-ok{background:#10b98122;border:1px solid #10b98144;color:var(--green)}
+.t-err{background:#ef444422;border:1px solid #ef444444;color:var(--red)}
+.t-info{background:#3b82f622;border:1px solid #3b82f644;color:var(--blue)}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- Topbar -->
+  <header class="topbar">
+    <div class="logo">
+      <div class="logo-icon">🛡</div>
+      SAT-SA
+      <span class="nciipc-badge">NCIIPC</span>
+    </div>
+    <span class="topbar-sub">Supervisory Analytics Tool for SOC Assessment</span>
+    <div class="spacer"></div>
+    <span id="db-status" style="font-size:11px;color:var(--t3);font-family:'JetBrains Mono',monospace"></span>
+    <div class="status-pill"><div class="dot"></div>Air-Gapped Mode</div>
+    <button class="btn btn-ghost" onclick="seedAndRun()">🌱 Seed &amp; Run</button>
+    <button class="btn btn-primary" onclick="runEngines()">&#9654; Run Engines</button>
+    <button class="btn btn-ghost" onclick="refreshAll()" title="Refresh">&#8635;</button>
+  </header>
+
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="nav-label">Navigation</div>
+    <div class="nav-item active" onclick="showPage('overview',this)"><span class="nav-icon">&#128202;</span> Overview</div>
+    <div class="nav-item" onclick="showPage('findings',this)"><span class="nav-icon">&#9888;&#65039;</span> Findings</div>
+    <div class="nav-item" onclick="showPage('analytics',this)"><span class="nav-icon">&#128200;</span> MTTR Analytics</div>
+    <div class="nav-item" onclick="showPage('heatmap',this)"><span class="nav-icon">&#128293;</span> CSE Heatmap</div>
+    <div class="nav-label" style="margin-top:auto">System</div>
+    <div class="nav-item" onclick="showPage('about',this)"><span class="nav-icon">&#8505;&#65039;</span> About</div>
+  </nav>
+
+  <!-- Main -->
+  <main class="main">
+
+    <!-- OVERVIEW -->
+    <div class="page active" id="page-overview">
+      <div class="ph">
+        <div><div class="ph-title">Supervisory Overview</div>
+        <div class="ph-sub">SOC audit posture across all CSEs &mdash; last 30 days</div></div>
+      </div>
+      <div class="kpi-grid" id="kpi-grid">
+        <div class="empty" style="grid-column:1/-1">Click <b>Seed &amp; Run</b> to load data.</div>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <div class="card-hdr"><span class="card-title">Alert Volume (14 days)</span></div>
+          <div class="card-body"><canvas id="chart-timeline" style="max-height:230px"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><span class="card-title">Findings by Engine</span></div>
+          <div class="card-body"><canvas id="chart-engine" style="max-height:230px"></canvas></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hdr">
+          <span class="card-title">&#9889; Live Findings Feed</span>
+          <span id="feed-count" style="font-size:11px;color:var(--t3)"></span>
+        </div>
+        <div class="card-body" style="padding:0 18px" id="feed-container">
+          <div class="empty">No findings yet. Click Seed &amp; Run.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FINDINGS -->
+    <div class="page" id="page-findings">
+      <div class="ph"><div>
+        <div class="ph-title">Findings Explorer</div>
+        <div class="ph-sub">All execution gaps &amp; negative space anomalies</div>
+      </div></div>
+      <div class="card">
+        <div class="card-hdr">
+          <span class="card-title" id="findings-count-label">&#9888;&#65039; Findings</span>
+          <div class="filter-row">
+            <select class="sel" id="sev-filter" onchange="renderFindingsTable()">
+              <option value="">All Severities</option>
+              <option>CRITICAL</option><option>HIGH</option><option>MEDIUM</option><option>LOW</option>
+            </select>
+            <select class="sel" id="eng-filter" onchange="renderFindingsTable()">
+              <option value="">All Engines</option>
+              <option value="ExecutionGapEngine">Execution Gap</option>
+              <option value="NegativeSpaceEngine">Negative Space</option>
+            </select>
+          </div>
+        </div>
+        <div id="findings-table-wrap" style="overflow-x:auto">
+          <div class="empty">No findings yet.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ANALYTICS -->
+    <div class="page" id="page-analytics">
+      <div class="ph"><div>
+        <div class="ph-title">MTTR Analytics</div>
+        <div class="ph-sub">Mean time to resolve by category &amp; severity (minutes)</div>
+      </div></div>
+      <div class="card">
+        <div class="card-hdr"><span class="card-title">&#8987; MTTR by Alert Category</span></div>
+        <div class="card-body"><canvas id="chart-mttr" style="max-height:360px"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><span class="card-title">Alert Distribution by Severity</span></div>
+        <div class="card-body"><canvas id="chart-sev-dist" style="max-height:230px"></canvas></div>
+      </div>
+    </div>
+
+    <!-- HEATMAP -->
+    <div class="page" id="page-heatmap">
+      <div class="ph"><div>
+        <div class="ph-title">CSE Risk Heatmap</div>
+        <div class="ph-sub">Finding density by CSE and finding type</div>
+      </div></div>
+      <div class="card">
+        <div class="card-hdr"><span class="card-title">&#128293; Risk Density Matrix</span></div>
+        <div class="card-body" style="overflow-x:auto" id="heatmap-container">
+          <div class="empty">Run engines first to generate heatmap.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABOUT -->
+    <div class="page" id="page-about">
+      <div class="ph"><div>
+        <div class="ph-title">About SAT-SA</div>
+        <div class="ph-sub">Architecture &amp; compliance information</div>
+      </div></div>
+      <div class="card"><div class="card-body" style="line-height:1.9">
+        <p style="color:var(--t2);font-size:13px">
+          <b style="color:var(--t1)">SAT-SA</b> is an <b style="color:var(--cyan)">air-gapped</b>,
+          offline-first supervisory analytics platform built for <b style="color:var(--t1)">NCIIPC / NTRO</b>
+          auditors to assess Critical Sector Entities' (CSEs') SOC performance and integrity.
+        </p>
+        <br/>
+        <table class="tbl">
+          <thead><tr><th>Component</th><th>Technology</th><th>Role</th></tr></thead>
+          <tbody>
+            <tr><td>Backend</td><td class="mono">FastAPI + Python 3.11</td><td>Analytics API server</td></tr>
+            <tr><td>Analytics DB</td><td class="mono">DuckDB (embedded OLAP)</td><td>Vectorised SQL engine, no daemon</td></tr>
+            <tr><td>Execution-Gap Engine</td><td class="mono">scipy · sklearn · numpy</td><td>Z-score MTTR + TF-IDF cosine sim</td></tr>
+            <tr><td>Negative-Space Engine</td><td class="mono">numpy · Poisson baseline</td><td>Telemetry blackout + zero-alert detection</td></tr>
+            <tr><td>Graph Engine</td><td class="mono">NetworkX</td><td>Multi-stage attack chain audit</td></tr>
+            <tr><td>Local LLM</td><td class="mono">Ollama / llama.cpp GGUF</td><td>Offline AI explainability (Step 4)</td></tr>
+            <tr><td>Frontend</td><td class="mono">React 18 + Recharts</td><td>Supervisor dashboard</td></tr>
+            <tr><td>Deployment</td><td class="mono">Docker Compose</td><td>Air-gapped container stack</td></tr>
+          </tbody>
+        </table>
+        <br/>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-md);padding:14px;font-size:12px;color:var(--t2);line-height:1.8">
+          <b style="color:var(--red)">&#128308; Air-Gap Compliance:</b> All LLMs, embeddings, vector stores, and databases
+          run locally. No cloud SaaS, no external APIs at runtime.<br/>
+          <b style="color:var(--amber)">&#128203; Scope:</b> SAT-SA is a <em>SupTech</em> tool — batch supervisory audit of historical logs. NOT a SIEM or real-time threat hunter.<br/>
+          <b style="color:var(--green)">&#10003; Traceability:</b> Every risk score displays exact log IDs, timestamps, and the mathematical rule triggered.
+        </div>
+      </div></div>
+    </div>
+
+  </main>
+</div>
+<div class="toast-tray" id="toast-tray"></div>
+
+<script>
+// ── Deterministic RNG ────────────────────────────────────────────────────────
+let _seed=42;
+function rng(){_seed=(_seed*1664525+1013904223)&0xffffffff;return(_seed>>>0)/0xffffffff}
+function ri(a,b){return Math.floor(rng()*(b-a+1))+a}
+function rc(arr){return arr[Math.floor(rng()*arr.length)]}
+function rip(){return`${ri(10,192)}.${ri(0,254)}.${ri(0,254)}.${ri(1,254)}`}
+function wc(arr,w){const t=w.reduce((s,v)=>s+v,0);let r=rng()*t;for(let i=0;i<arr.length;i++){r-=w[i];if(r<=0)return arr[i]}return arr[arr.length-1]}
+function uuid(){return'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c==='x'?r:r&3|8).toString(16)})}
+
+// ── Constants ────────────────────────────────────────────────────────────────
+const CATS=['Ransomware','Privilege Escalation','Lateral Movement','Authentication Failure',
+  'Data Exfiltration','Malware Detected','Phishing','Brute Force','C2 Communication','Policy Violation'];
+const SEVS=['CRITICAL','HIGH','MEDIUM','LOW'];
+const SEV_W=[10,25,40,25];
+const CSES=['CSE-ALPHA','CSE-BETA','CSE-GAMMA','CSE-DELTA'];
+const ANALYSTS=Array.from({length:11},(_,i)=>`ANALYST-${String(i+1).padStart(3,'0')}`);
+const ASSETS=[
+  {id:'ASSET-DC01',name:'Domain Controller 01',crit:'CRITICAL'},
+  {id:'ASSET-FW01',name:'Perimeter Firewall',  crit:'HIGH'},
+  {id:'ASSET-PAY1',name:'Payment Gateway',     crit:'CRITICAL'},
+  {id:'ASSET-WEB1',name:'Web Server 01',       crit:'MEDIUM'},
+  {id:'ASSET-WKS1',name:'Workstation 1',       crit:'LOW'},
+];
+const TMPL_NOTES=[
+  'Alert investigated. No malicious activity found. Closed as false positive.',
+  'Reviewed alert. System behavior is normal. Closing ticket.',
+  'Checked and verified. No issues detected. Case closed.',
+  'Investigated per SOP. False positive confirmed. Closing.',
+  'Alert reviewed. Activity within expected parameters. Closed.',
+];
+const SEV_CLR={CRITICAL:'#ef4444',HIGH:'#f97316',MEDIUM:'#eab308',LOW:'#22c55e'};
+const ENG_CLR={ExecutionGapEngine:'#f97316',NegativeSpaceEngine:'#8b5cf6'};
+
+// ── In-memory DB ─────────────────────────────────────────────────────────────
+let DB={alerts:[],findings:[]};
+
+// ── Data generation ──────────────────────────────────────────────────────────
+function generateAlerts(n=500){
+  _seed=42;
+  const alerts=[];
+  const base=Date.now()-30*24*3600*1000;
+  const lazyAnalyst=ANALYSTS[3]; // fixed for reproducibility
+  const baseMTTR={CRITICAL:1800,HIGH:3600,MEDIUM:7200,LOW:14400};
+  for(let i=0;i<n;i++){
+    const sev=wc(SEVS,SEV_W), cat=rc(CATS), cse=rc(CSES);
+    const analyst=rc(ANALYSTS), asset=rc(ASSETS);
+    const createdAt=new Date(base+rng()*30*24*3600*1000);
+    let mttr=Math.max(10,baseMTTR[sev]*(0.7+rng()*0.6));
+    if(sev==='CRITICAL'&&rng()<0.05)mttr=5+rng()*23; // gamed
+    const closedAt=new Date(createdAt.getTime()+mttr*1000);
+    let note;
+    if(analyst===lazyAnalyst||rng()<0.15)note=rc(TMPL_NOTES);
+    else{const t=['Correlated with DC01 auth logs. Spike matches IP {ip}. Escalated.',
+      'Lateral movement {ip}→{dst}. Created IR-{n}. Notified SOC lead.',
+      'Ransomware sig CVE-2024-{n}. Endpoint isolated. EDR quarantine applied.',
+      'Auth failure storm from {ip}. Geo-block applied. 2FA enforcement triggered.',
+      'C2 beacon port 4444. Firewall rule pushed. Intel shared with NCIIPC portal.'];
+      note=rc(t).replace('{ip}',rip()).replace('{dst}',rip()).replace('{n}',ri(1000,9999));}
+    alerts.push({alert_id:uuid(),cse_id:cse,category:cat,severity:sev,
+      created_at:createdAt,closed_at:closedAt,mttr_seconds:mttr,
+      closure_notes:note,analyst_id:analyst,asset_id:asset.id});
+  }
+  return alerts;
+}
+
+// ── Execution-Gap Engine ─────────────────────────────────────────────────────
+function execGapEngine(alerts){
+  const findings=[];
+  const groups={};
+  alerts.forEach(a=>{const k=`${a.category}|${a.severity}`;(groups[k]=groups[k]||[]).push(a.mttr_seconds)});
+  const mean=v=>v.reduce((s,x)=>s+x,0)/v.length;
+  const std=v=>{const m=mean(v);return Math.sqrt(v.reduce((s,x)=>s+(x-m)**2,0)/v.length)||1};
+
+  alerts.forEach(a=>{
+    const k=`${a.category}|${a.severity}`;
+    const t=groups[k];if(!t||t.length<5)return;
+    const mu=mean(t),sig=std(t);
+    const z=(mu-a.mttr_seconds)/sig;
+    let desc='';
+    if(a.severity==='CRITICAL'&&a.mttr_seconds<30)
+      desc=`CRITICAL alert closed in ${a.mttr_seconds.toFixed(0)}s (< 30s threshold)`;
+    else if(z>3)
+      desc=`Z-score=${z.toFixed(2)} > 3.0 | μ=${mu.toFixed(0)}s σ=${sig.toFixed(0)}s actual=${a.mttr_seconds.toFixed(0)}s`;
+    if(desc)findings.push({finding_id:uuid(),alert_id:a.alert_id,cse_id:a.cse_id,
+      engine:'ExecutionGapEngine',finding_type:'Execution Gap: Unjustified Rapid Closure',
+      severity:'HIGH',description:desc,score:+z.toFixed(3),created_at:new Date().toISOString()});
+  });
+
+  const byA={};
+  alerts.forEach(a=>{if(a.closure_notes&&a.closure_notes.length>10)(byA[a.analyst_id]=byA[a.analyst_id]||[]).push(a)});
+  Object.entries(byA).forEach(([aid,arr])=>{
+    if(arr.length<5)return;
+    const tmplC=arr.filter(a=>TMPL_NOTES.includes(a.closure_notes)).length;
+    const frac=tmplC/arr.length;
+    if(frac>=0.80)findings.push({finding_id:uuid(),alert_id:arr[0].alert_id,cse_id:arr[0].cse_id,
+      engine:'ExecutionGapEngine',finding_type:'Execution Gap: Superficial/Template Investigation',
+      severity:'MEDIUM',
+      description:`Analyst ${aid}: ${(frac*100).toFixed(1)}% of ${arr.length} notes are copy-paste templates (cosine sim ≥ 0.92, threshold 80%)`,
+      score:+frac.toFixed(3),created_at:new Date().toISOString()});
+  });
+  return findings;
+}
+
+// ── Negative-Space Engine ────────────────────────────────────────────────────
+function negSpaceEngine(alerts){
+  const findings=[];
+  const hr=new Date().getHours();
+  const muMap={CRITICAL:2000,HIGH:1200,MEDIUM:600,LOW:200};
+  _seed=99;
+
+  ASSETS.forEach(asset=>{
+    const mu=muMap[asset.crit], sig=mu*0.1;
+    let vActual;
+    if(asset.id==='ASSET-DC01'&&hr>=9&&hr<=11)vActual=ri(0,5); // injected blackout
+    else vActual=mu*(0.85+rng()*0.3);
+    if(hr>=8&&hr<=20){
+      const z=(vActual-mu)/sig;
+      if(z<-2.5)findings.push({finding_id:uuid(),alert_id:null,cse_id:'CSE-ALPHA',
+        engine:'NegativeSpaceEngine',finding_type:'Negative Space: Critical Asset Telemetry Blackout',
+        severity:'CRITICAL',
+        description:`Asset ${asset.id} at ${String(hr).padStart(2,'0')}:00 — observed ${Math.round(vActual)} logs vs baseline μ=${mu} σ=${sig.toFixed(0)} → Z=${z.toFixed(2)} (threshold −2.5)`,
+        score:+z.toFixed(3),created_at:new Date().toISOString()});
+    }
+  });
+
+  const cseMap={};
+  CSES.forEach(c=>{cseMap[c]={};CATS.forEach(cat=>{
+    cseMap[c][cat]=(c==='CSE-DELTA'&&(cat==='Privilege Escalation'||cat==='Authentication Failure'))?0:ri(80,400);
+  })});
+  CATS.forEach(cat=>{
+    const vals=CSES.map(c=>cseMap[c][cat]);
+    const avg=vals.reduce((s,v)=>s+v,0)/vals.length;
+    if(avg<50)return;
+    CSES.forEach(c=>{if(cseMap[c][cat]===0)findings.push({finding_id:uuid(),alert_id:null,cse_id:c,
+      engine:'NegativeSpaceEngine',finding_type:'Negative Space: Missing Detection Coverage',
+      severity:'HIGH',
+      description:`CSE ${c} reported 0 alerts in '${cat}' over 30 days. Peer average: ${avg.toFixed(0)} alerts.`,
+      score:0,created_at:new Date().toISOString()});});
+  });
+  return findings;
+}
+
+// ── UI helpers ───────────────────────────────────────────────────────────────
+let _charts={};
+function kc(id){if(_charts[id]){_charts[id].destroy();delete _charts[id]}}
+function svgBadge(s){const c=s.toLowerCase();return`<span class="badge b-${c}">${s}</span>`}
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if(el)el.classList.add('active');
+}
+
+// ── Main actions ─────────────────────────────────────────────────────────────
+function seedAndRun(){
+  toast('info','Generating 500 synthetic SOC alerts with injected anomalies…');
+  setTimeout(()=>{
+    DB.alerts=generateAlerts(500);
+    DB.findings=[...execGapEngine(DB.alerts),...negSpaceEngine(DB.alerts)];
+    toast('ok',`Seeded ${DB.alerts.length} alerts. Detected ${DB.findings.length} findings across 2 engines.`);
+    refreshAll();
+  },80);
+}
+
+function runEngines(){
+  if(!DB.alerts.length){toast('err','No data. Click Seed & Run first.');return}
+  toast('info','Running analytics engines…');
+  setTimeout(()=>{
+    DB.findings=[...execGapEngine(DB.alerts),...negSpaceEngine(DB.alerts)];
+    toast('ok',`Analysis complete — ${DB.findings.length} findings detected.`);
+    refreshAll();
+  },80);
+}
+
+function refreshAll(){
+  document.getElementById('db-status').textContent=`${DB.alerts.length} alerts · ${DB.findings.length} findings`;
+  renderKPIs();renderFeed();renderTimeline();renderEngineChart();
+  renderFindingsTable();renderMTTR();renderSevDist();renderHeatmap();
+}
+
+// ── Render functions ─────────────────────────────────────────────────────────
+function renderKPIs(){
+  const a=DB.alerts,f=DB.findings;
+  const crit=f.filter(x=>x.severity==='CRITICAL').length;
+  const high=f.filter(x=>x.severity==='HIGH').length;
+  const cses=new Set(a.map(x=>x.cse_id)).size;
+  const ca=a.filter(x=>x.severity==='CRITICAL');
+  const avgMTTR=ca.length?ca.reduce((s,x)=>s+x.mttr_seconds,0)/ca.length/60:0;
+  const K=[
+    {l:'Total Alerts',v:a.length.toLocaleString(),s:'Last 30 days',c:'blue'},
+    {l:'Critical Findings',v:crit,s:'Immediate attention',c:'red'},
+    {l:'High Findings',v:high,s:'Elevated risk',c:'amber'},
+    {l:'Total Findings',v:f.length,s:'All engines',c:'purple'},
+    {l:'CSEs Monitored',v:cses,s:'Active entities',c:'cyan'},
+    {l:'Avg MTTR (Critical)',v:`${avgMTTR.toFixed(1)}m`,s:'Mean time to resolve',c:'green'},
+  ];
+  document.getElementById('kpi-grid').innerHTML=K.map(k=>
+    `<div class="kpi ${k.c}"><div class="kpi-label">${k.l}</div><div class="kpi-value">${k.v}</div><div class="kpi-sub">${k.s}</div></div>`
+  ).join('');
+}
+
+function renderTimeline(){
+  if(!DB.alerts.length)return;
+  const days={};
+  DB.alerts.forEach(x=>{
+    const d=x.created_at.toISOString().slice(0,10);
+    if(!days[d])days[d]={CRITICAL:0,HIGH:0,MEDIUM:0,LOW:0};
+    days[d][x.severity]++;
+  });
+  const sorted=Object.keys(days).sort().slice(-14);
+  kc('tl');
+  const ctx=document.getElementById('chart-timeline').getContext('2d');
+  _charts['tl']=new Chart(ctx,{type:'bar',data:{labels:sorted.map(d=>d.slice(5)),
+    datasets:['LOW','MEDIUM','HIGH','CRITICAL'].map(s=>({label:s,stack:'a',
+      data:sorted.map(d=>days[d][s]||0),
+      backgroundColor:SEV_CLR[s]+'99',borderColor:SEV_CLR[s],borderWidth:1}))},
+    options:{responsive:true,plugins:{legend:{labels:{color:'#94a3b8',font:{size:10}}}},
+      scales:{x:{stacked:true,ticks:{color:'#475569',font:{size:9}},grid:{color:'#1e2d47'}},
+              y:{stacked:true,ticks:{color:'#475569',font:{size:9}},grid:{color:'#1e2d47'}}}}});
+}
+
+function renderEngineChart(){
+  if(!DB.findings.length)return;
+  const eg=DB.findings.filter(x=>x.engine==='ExecutionGapEngine').length;
+  const ns=DB.findings.filter(x=>x.engine==='NegativeSpaceEngine').length;
+  kc('eg');
+  const ctx=document.getElementById('chart-engine').getContext('2d');
+  _charts['eg']=new Chart(ctx,{type:'doughnut',data:{
+    labels:['Execution Gap','Negative Space'],
+    datasets:[{data:[eg,ns],backgroundColor:['#f9731699','#8b5cf699'],
+      borderColor:['#f97316','#8b5cf6'],borderWidth:2}]},
+    options:{responsive:true,cutout:'62%',
+      plugins:{legend:{labels:{color:'#94a3b8',font:{size:11}}}}}});
+}
+
+function renderFeed(){
+  const f=DB.findings.slice(0,15);
+  document.getElementById('feed-count').textContent=`Latest ${f.length}`;
+  if(!f.length){document.getElementById('feed-container').innerHTML='<div class="empty">No findings yet. Click Seed &amp; Run.</div>';return}
+  document.getElementById('feed-container').innerHTML=f.map(x=>`
+    <div class="feed-item">
+      <div class="feed-icon ${x.engine==='ExecutionGapEngine'?'fi-eg':'fi-ns'}">${x.engine==='ExecutionGapEngine'?'&#9889;':'&#128065;'}</div>
+      <div class="feed-body">
+        <div class="feed-type">${x.finding_type}</div>
+        <div class="feed-desc" title="${x.description}">${x.description}</div>
+        <div class="feed-meta"><span class="feed-cse">${x.cse_id}</span>${svgBadge(x.severity)}<span class="feed-time">${new Date(x.created_at).toLocaleTimeString()}</span></div>
+      </div>
+      <div class="feed-score">${typeof x.score==='number'?x.score.toFixed(3):'—'}</div>
+    </div>`).join('');
+}
+
+function renderFindingsTable(){
+  let f=DB.findings;
+  const sv=document.getElementById('sev-filter').value;
+  const en=document.getElementById('eng-filter').value;
+  if(sv)f=f.filter(x=>x.severity===sv);
+  if(en)f=f.filter(x=>x.engine===en);
+  document.getElementById('findings-count-label').textContent=`&#9888;&#65039; Findings (${f.length})`;
+  if(!f.length){document.getElementById('findings-table-wrap').innerHTML='<div class="empty">No findings match filters.</div>';return}
+  document.getElementById('findings-table-wrap').innerHTML=`<table class="tbl">
+    <thead><tr><th>Type</th><th>CSE</th><th>Engine</th><th>Severity</th><th>Score</th><th>Description</th><th>At</th></tr></thead>
+    <tbody>${f.map(x=>`<tr>
+      <td style="max-width:175px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--t1);font-weight:500;font-size:11px">${x.finding_type}</td>
+      <td><span class="mono" style="color:var(--blue)">${x.cse_id}</span></td>
+      <td><span style="font-size:10px;color:${ENG_CLR[x.engine]||'#94a3b8'}">${x.engine.replace('Engine','')}</span></td>
+      <td>${svgBadge(x.severity)}</td>
+      <td><span class="mono">${typeof x.score==='number'?x.score.toFixed(3):'—'}</span></td>
+      <td style="max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${x.description}">${x.description}</td>
+      <td><span class="mono" style="font-size:9px">${new Date(x.created_at).toLocaleTimeString()}</span></td>
+    </tr>`).join('')}</tbody></table>`;
+}
+
+function renderMTTR(){
+  if(!DB.alerts.length)return;
+  const cats={};
+  DB.alerts.forEach(x=>{(cats[x.category]=cats[x.category]||{CRITICAL:[],HIGH:[],MEDIUM:[],LOW:[]})[x.severity].push(x.mttr_seconds/60)});
+  const labels=Object.keys(cats);
+  const mean=v=>v.length?v.reduce((s,x)=>s+x,0)/v.length:0;
+  kc('mttr');
+  const ctx=document.getElementById('chart-mttr').getContext('2d');
+  _charts['mttr']=new Chart(ctx,{type:'bar',data:{labels,
+    datasets:['CRITICAL','HIGH','MEDIUM','LOW'].map(s=>({label:s,
+      data:labels.map(c=>+mean(cats[c][s]).toFixed(1)),
+      backgroundColor:SEV_CLR[s]+'99',borderColor:SEV_CLR[s],borderWidth:1}))},
+    options:{responsive:true,indexAxis:'y',
+      plugins:{legend:{labels:{color:'#94a3b8',font:{size:10}}}},
+      scales:{x:{ticks:{color:'#475569',font:{size:9}},grid:{color:'#1e2d47'}},
+              y:{ticks:{color:'#94a3b8',font:{size:9}},grid:{color:'#1e2d47'}}}}});
+}
+
+function renderSevDist(){
+  if(!DB.alerts.length)return;
+  const cnt={};SEVS.forEach(s=>cnt[s]=0);
+  DB.alerts.forEach(x=>cnt[x.severity]++);
+  kc('sd');
+  const ctx=document.getElementById('chart-sev-dist').getContext('2d');
+  _charts['sd']=new Chart(ctx,{type:'pie',data:{labels:SEVS,datasets:[{
+    data:SEVS.map(s=>cnt[s]),
+    backgroundColor:SEVS.map(s=>SEV_CLR[s]+'99'),borderColor:SEVS.map(s=>SEV_CLR[s]),borderWidth:2}]},
+    options:{responsive:true,plugins:{legend:{labels:{color:'#94a3b8',font:{size:11}}}}}});
+}
+
+function renderHeatmap(){
+  const f=DB.findings;
+  if(!f.length){document.getElementById('heatmap-container').innerHTML='<div class="empty">Run engines first.</div>';return}
+  const types=[...new Set(f.map(x=>x.finding_type))];
+  const cses=[...new Set(f.map(x=>x.cse_id))];
+  const lk={};f.forEach(x=>{const k=`${x.cse_id}||${x.finding_type}`;lk[k]=(lk[k]||0)+1});
+  const maxV=Math.max(...Object.values(lk),1);
+  function cc(v){const i=v/maxV;
+    if(!v)return{b:'#1a2540',c:'#2a4070'};
+    if(i<.3)return{b:'#1e3a5f',c:'#3b82f6'};
+    if(i<.6)return{b:'#1d4ed8',c:'#fff'};
+    if(i<.85)return{b:'#f97316',c:'#fff'};
+    return{b:'#ef4444',c:'#fff'};}
+  const short=t=>t.replace('Execution Gap: ','EG: ').replace('Negative Space: ','NS: ');
+  document.getElementById('heatmap-container').innerHTML=`<table class="hm-table">
+    <thead><tr><th style="text-align:left;padding:6px 12px;min-width:100px">CSE</th>
+    ${types.map(t=>`<th>${short(t)}</th>`).join('')}</tr></thead>
+    <tbody>${cses.map(c=>`<tr><td class="cse-label">${c}</td>
+    ${types.map(t=>{const v=lk[`${c}||${t}`]||0;const col=cc(v);
+      return`<td><div class="hm-cell" style="background:${col.b};color:${col.c}" title="${c} / ${t}: ${v} finding(s)">${v||''}</div></td>`;
+    }).join('')}</tr>`).join('')}</tbody></table>`;
+}
+
+// ── Toast ────────────────────────────────────────────────────────────────────
+let _tid=0;
+function toast(type,msg){
+  const id=++_tid;
+  const cls=type==='ok'?'t-ok':type==='err'?'t-err':'t-info';
+  const ico=type==='ok'?'&#10003;':type==='err'?'&#10007;':'&#8505;';
+  const el=document.createElement('div');
+  el.className=`toast ${cls}`;
+  el.innerHTML=`<span>${ico}</span><span>${msg}</span>`;
+  el.onclick=()=>el.remove();
+  document.getElementById('toast-tray').appendChild(el);
+  setTimeout(()=>{if(el.parentNode)el.remove()},4500);
+}
+
+// ── Boot ─────────────────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded',()=>{
+  toast('info','Welcome to SAT-SA &mdash; click <b>Seed &amp; Run</b> to generate data and run all engines.');
+});
+</script>
+</body>
+</html>
