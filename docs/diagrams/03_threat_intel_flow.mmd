@@ -1,0 +1,40 @@
+﻿flowchart LR
+    subgraph External["External (Manual Transfer Only)"]
+        FEED[CTI Feed Source<br/>TAXII / MISP / manual]
+    end
+
+    subgraph Transfer["Offline Transfer"]
+        USB[USB / Secure Media<br/>bundle.json + manifest.json]
+    end
+
+    subgraph Import["Import Layer"]
+        API[POST /api/threat-intel/import]
+        VERIFY[verify_bundle_checksum<br/>SHA-256 against manifest]
+        PARSER[import_threat_intel_bundle<br/>Parse IOCs + CVEs]
+    end
+
+    subgraph DB["DuckDB Storage"]
+        IOCS[(threat_intel_iocs<br/>IOC type, value,<br/>threat_actor, MITRE TTPs)]
+        CVES[(threat_intel_cves<br/>CVE-ID, CVSS, products)]
+        BUNDLES[(threat_intel_bundles<br/>bundle_id, sha256, status)]
+    end
+
+    subgraph Usage["Runtime Usage"]
+        RS[Risk Scoring Engine<br/>SQL join: alerts on source_ip/dest_ip]
+        TB[Attack Traceback<br/>get_threat_intel_lookup<br/>enriches graph nodes]
+        BENCH[Peer Benchmarks<br/>ioc_count per CSE]
+        PDF[PDF Report<br/>matched_iocs section]
+    end
+
+    FEED -->|manual collection| USB
+    USB --> API
+    API --> VERIFY
+    VERIFY -->|mismatch| ERR[ChecksumMismatchError<br/>HTTP 400 Rejected]
+    VERIFY -->|verified| PARSER
+    PARSER --> IOCS
+    PARSER --> CVES
+    PARSER --> BUNDLES
+    IOCS --> RS
+    IOCS --> TB
+    IOCS --> BENCH
+    TB --> PDF

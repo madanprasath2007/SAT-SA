@@ -1,0 +1,6 @@
+asset_id,cse_id,asset_name,asset_type,criticality,ip_address,hostname,last_seen
+MED-SRV-01,CSE-D,Medical Records Server,server,CRITICAL,10.20.1.10,MED-SRV-01,2025-08-30T23:59:59+00:00
+MED-SRV-02,CSE-D,Patient Data Server,server,CRITICAL,10.20.1.11,MED-SRV-02,2025-08-30T23:59:59+00:00
+MED-DB-01,CSE-D,Healthcare Database,database,CRITICAL,10.20.1.50,MED-DB-01,2025-08-30T23:59:59+00:00
+MED-WKS-01,CSE-D,Clinical Workstation,workstation,MEDIUM,10.20.2.10,MED-WKS-01,2025-08-30T23:59:59+00:00
+MED-IMG-01,CSE-D,Imaging System,server,HIGH,10.20.3.10,MED-IMG-01,2025-08-30T23:59:59+00:00

@@ -1,0 +1,48 @@
+﻿graph TB
+    subgraph Host["On-Premises Host / VM"]
+        subgraph Compose["Docker Compose Stack"]
+            FE["satsa-frontend<br/>Nginx :80<br/>serves React build<br/>exposed: 5173:80"]
+            BE["satsa-backend<br/>Uvicorn :8000<br/>FastAPI + DuckDB<br/>exposed: 8000:8000"]
+            OL["satsa-ollama (optional)<br/>Ollama :11434<br/>profile: ai, llm<br/>exposed: 11434:11434"]
+            SEED["satsa-seed (optional)<br/>Python seed runner<br/>profile: seed<br/>runs: seed_demo.py then exits"]
+        end
+
+        subgraph Volumes["Persistent Volumes"]
+            DATA["/app/data<br/>sat_sa.duckdb<br/>threat_intel/"]
+            MODELS["/root/.ollama<br/>ollama-models volume<br/>LLM weights cached offline"]
+        end
+
+        subgraph Config["Configuration"]
+            ENV[".env file<br/>DB_PATH, JWT_SECRET_KEY,<br/>OLLAMA_BASE_URL, LLM_BACKEND,<br/>CLASSIFICATION_LEVEL"]
+        end
+    end
+
+    subgraph Users["Users (Air-Gapped Network)"]
+        SUP[Supervisor Browser]
+        ANA[Analyst Browser]
+        ADM[Admin Browser]
+    end
+
+    subgraph Manual["Manual Offline Transfers"]
+        CTI[CTI Bundle Files<br/>bundle.json + manifest.json]
+        TELEMETRY[CSE Telemetry Files<br/>CSV or JSON]
+    end
+
+    SUP -->|HTTPS :5173| FE
+    ANA -->|HTTPS :5173| FE
+    ADM -->|HTTPS :5173| FE
+    FE -->|HTTP :8000| BE
+    BE -->|HTTP :11434| OL
+    BE -.->|fallback if Ollama down| BE
+    BE --> DATA
+    OL --> MODELS
+    SEED --> DATA
+    ENV --> BE
+    CTI -->|POST /api/threat-intel/import| BE
+    TELEMETRY -->|POST /api/ingest/*| BE
+
+    FE -.->|depends_on healthy| BE
+    OL -.->|optional profile| Compose
+    SEED -.->|optional profile| Compose
+
+    note1["Health check: GET /api/health<br/>interval: 10s, retries: 3"]

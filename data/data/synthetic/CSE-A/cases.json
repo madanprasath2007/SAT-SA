@@ -1,0 +1,13 @@
+[
+  {
+    "case_id": "S1-CASE-0001",
+    "cse_id": "CSE-A",
+    "title": "APT Campaign \u2014 External IP 203.0.113.5",
+    "severity": "CRITICAL",
+    "status": "open",
+    "opened_at": "2025-08-15T02:00:00+00:00",
+    "closed_at": "",
+    "analyst_id": "ANA-A01",
+    "linked_alert_ids": "S1-ALT-0001,S1-ALT-0002,S1-ALT-0003,S1-ALT-0004,S1-ALT-0005,S1-ALT-0006,S1-ALT-0007,S1-ALT-0008,S1-ALT-0009,S1-ALT-0010,S1-ALT-0011,S1-ALT-0012"
+  }
+]

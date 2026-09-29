@@ -1,0 +1,23 @@
+{
+  "CSE-A": {
+    "alerts": 228,
+    "cases": 1,
+    "investigations": 1,
+    "escalations": 1,
+    "assets": 6
+  },
+  "CSE-B": {
+    "alerts": 209,
+    "cases": 1,
+    "assets": 7
+  },
+  "CSE-C": {
+    "alerts": 237,
+    "assets": 6
+  },
+  "CSE-D": {
+    "alerts": 221,
+    "escalations": 0,
+    "assets": 5
+  }
+}

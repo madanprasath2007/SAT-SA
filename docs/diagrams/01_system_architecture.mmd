@@ -1,0 +1,47 @@
+﻿graph TB
+    subgraph Offline["Air-Gapped Deployment Boundary"]
+        subgraph Frontend["React Frontend (Vite :5173)"]
+            UI[Supervisor Dashboard<br/>12 React Pages]
+        end
+
+        subgraph Backend["FastAPI Backend (:8000)"]
+            API[11 Router Modules<br/>/api/*]
+            PIPE[Ingestion Pipeline<br/>5 Stages]
+            ENG[Analytics Engines<br/>5 Engines]
+            SCORE[Risk Scoring]
+            TB[Attack Traceback]
+            REV[Review & Feedback]
+            EXP[PDF / CSV Export]
+            AUTH[JWT Auth + RBAC]
+            AUD[Audit Logger]
+        end
+
+        subgraph Storage["Data Layer"]
+            DB[(DuckDB<br/>sat_sa.duckdb<br/>20 Tables)]
+            CTI[CTI Bundle Files<br/>bundle.json + manifest.json]
+        end
+
+        subgraph LLM["Optional LLM (Profile: ai)"]
+            OLLAMA[Ollama Container<br/>:11434<br/>e.g. mistral:latest]
+            MOCK[MockLLM<br/>Deterministic Fallback]
+        end
+    end
+
+    UI -->|axios HTTP| API
+    API --> PIPE
+    API --> ENG
+    API --> SCORE
+    API --> TB
+    API --> REV
+    API --> EXP
+    API --> AUTH
+    ENG --> DB
+    PIPE --> DB
+    SCORE --> DB
+    TB --> DB
+    REV --> DB
+    AUD --> DB
+    CTI -->|manual import| API
+    TB -->|generate| OLLAMA
+    TB -->|fallback| MOCK
+    OLLAMA -.->|offline inference| MOCK

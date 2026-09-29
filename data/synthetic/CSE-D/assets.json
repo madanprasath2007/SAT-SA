@@ -1,0 +1,52 @@
+[
+  {
+    "asset_id": "MED-SRV-01",
+    "cse_id": "CSE-D",
+    "asset_name": "Medical Records Server",
+    "asset_type": "server",
+    "criticality": "CRITICAL",
+    "ip_address": "10.20.1.10",
+    "hostname": "MED-SRV-01",
+    "last_seen": "2025-08-30T23:59:59+00:00"
+  },
+  {
+    "asset_id": "MED-SRV-02",
+    "cse_id": "CSE-D",
+    "asset_name": "Patient Data Server",
+    "asset_type": "server",
+    "criticality": "CRITICAL",
+    "ip_address": "10.20.1.11",
+    "hostname": "MED-SRV-02",
+    "last_seen": "2025-08-30T23:59:59+00:00"
+  },
+  {
+    "asset_id": "MED-DB-01",
+    "cse_id": "CSE-D",
+    "asset_name": "Healthcare Database",
+    "asset_type": "database",
+    "criticality": "CRITICAL",
+    "ip_address": "10.20.1.50",
+    "hostname": "MED-DB-01",
+    "last_seen": "2025-08-30T23:59:59+00:00"
+  },
+  {
+    "asset_id": "MED-WKS-01",
+    "cse_id": "CSE-D",
+    "asset_name": "Clinical Workstation",
+    "asset_type": "workstation",
+    "criticality": "MEDIUM",
+    "ip_address": "10.20.2.10",
+    "hostname": "MED-WKS-01",
+    "last_seen": "2025-08-30T23:59:59+00:00"
+  },
+  {
+    "asset_id": "MED-IMG-01",
+    "cse_id": "CSE-D",
+    "asset_name": "Imaging System",
+    "asset_type": "server",
+    "criticality": "HIGH",
+    "ip_address": "10.20.3.10",
+    "hostname": "MED-IMG-01",
+    "last_seen": "2025-08-30T23:59:59+00:00"
+  }
+]

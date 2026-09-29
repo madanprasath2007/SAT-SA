@@ -1,0 +1,53 @@
+﻿sequenceDiagram
+    actor Supervisor
+    participant FE as React Frontend
+    participant API as FastAPI Backend
+    participant PIPE as Pipeline Orchestrator
+    participant ENG as Analytics Engines x5
+    participant LLM as LLM Client
+    participant DB as DuckDB
+
+    Supervisor->>FE: Upload CSE telemetry file
+    FE->>API: POST /api/ingest/{cse_id}/{data_type}
+    API->>PIPE: run_pipeline(content, format, cse_id)
+    PIPE->>DB: validate -> clean -> normalize -> store
+    DB-->>PIPE: batch_id, row counts
+    PIPE-->>API: {rows_accepted, rows_rejected, batch_id}
+    API-->>FE: Ingest result
+
+    Supervisor->>FE: Click "Run Analytics"
+    FE->>API: POST /api/analytics/run
+    loop Each of 5 engines
+        API->>ENG: engine.run(con, cse_id)
+        ENG->>DB: SELECT alerts/cases/assets
+        DB-->>ENG: rows
+        ENG-->>API: List[Finding]
+    end
+    API->>DB: persist_findings() DELETE+INSERT
+    API->>DB: update_risk_scores() INSERT OR REPLACE
+    API-->>FE: {total_findings, by_engine, risk_scores}
+
+    Supervisor->>FE: Open Attack Path page
+    FE->>API: POST /api/traceback/run {cse_id}
+    API->>DB: fetch alerts for CSE
+    API->>LLM: generate(evidence_prompt + reviews_context)
+    LLM-->>API: JSON narrative + stages
+    API->>DB: verify evidence_ids against alerts table
+    API->>DB: INSERT traceback_reports
+    API-->>FE: TracebackReport {stages, graph, narrative}
+    FE->>FE: Render React Flow graph
+
+    Supervisor->>FE: Submit review decision
+    FE->>API: POST /api/reviews/ {finding_id, decision, notes}
+    API->>DB: INSERT reviews
+    alt decision == FALSE_POSITIVE
+        API->>DB: INSERT feedback_logs (PENDING)
+    end
+    API->>DB: INSERT audit_logs
+    API-->>FE: {review_id, feedback_log_id}
+
+    Supervisor->>FE: Approve tuning proposal
+    FE->>API: POST /api/feedback/approve/{log_id}
+    API->>DB: UPDATE feedback_logs SET status=APPROVED
+    API->>DB: INSERT audit_logs APPROVE_RULE_TUNING
+    API-->>FE: success

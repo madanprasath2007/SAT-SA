@@ -1,0 +1,88 @@
+categories:
+  "Suspicious Login":
+    tactic_id: "TA0001"
+    tactic_name: "Initial Access"
+    technique_id: "T1078"
+    technique_name: "Valid Accounts"
+    stage_index: 1
+    description: "Adversary gained initial access via compromised or unauthorized credentials."
+
+  "Privilege Escalation":
+    tactic_id: "TA0004"
+    tactic_name: "Privilege Escalation"
+    technique_id: "T1068"
+    technique_name: "Exploitation for Privilege Escalation"
+    stage_index: 2
+    description: "Adversary elevated permissions to administrative or SYSTEM authority."
+
+  "Lateral Movement":
+    tactic_id: "TA0008"
+    tactic_name: "Lateral Movement"
+    technique_id: "T1021.001"
+    technique_name: "Remote Services: Remote Desktop Protocol"
+    stage_index: 3
+    description: "Adversary traversed internal network segments using remote services or credentials."
+
+  "File Access":
+    tactic_id: "TA0009"
+    tactic_name: "Data Access"
+    technique_id: "T1005"
+    technique_name: "Data from Local System"
+    stage_index: 4
+    description: "Adversary discovered and accessed sensitive files, databases, or schematics."
+
+  "Sensitive File Access":
+    tactic_id: "TA0009"
+    tactic_name: "Data Access"
+    technique_id: "T1005"
+    technique_name: "Data from Local System"
+    stage_index: 4
+    description: "Adversary accessed restricted confidential data stores or configuration files."
+
+  "Log Tampering":
+    tactic_id: "TA0005"
+    tactic_name: "Evidence Tampering"
+    technique_id: "T1070"
+    technique_name: "Indicator Removal on Host"
+    stage_index: 5
+    description: "Adversary cleared event logs and manipulated security records to impede attribution."
+
+  "Defense Evasion":
+    tactic_id: "TA0005"
+    tactic_name: "Evidence Tampering"
+    technique_id: "T1070"
+    technique_name: "Indicator Removal on Host"
+    stage_index: 5
+    description: "Adversary altered audit trails and security monitoring controls."
+
+  "C2 Communication":
+    tactic_id: "TA0011"
+    tactic_name: "Command and Control"
+    technique_id: "T1071"
+    technique_name: "Application Layer Protocol"
+    stage_index: 2
+    description: "Adversary maintained persistent beaconing channel to remote command infrastructure."
+
+  "Malware Detected":
+    tactic_id: "TA0002"
+    tactic_name: "Execution"
+    technique_id: "T1204"
+    technique_name: "User Execution"
+    stage_index: 2
+    description: "Malicious payload deployed and executed on host."
+
+  "Ransomware":
+    tactic_id: "TA0040"
+    tactic_name: "Impact"
+    technique_id: "T1486"
+    technique_name: "Data Encrypted for Impact"
+    stage_index: 5
+    description: "Adversary encrypted critical storage volumes and databases."
+
+  "Data Exfiltration":
+    tactic_id: "TA0010"
+    tactic_name: "Exfiltration"
+    technique_id: "T1041"
+    technique_name: "Exfiltration Over C2 Channel"
+    stage_index: 4
+    description: "Adversary transferred sensitive operational telemetry outside network perimeter."

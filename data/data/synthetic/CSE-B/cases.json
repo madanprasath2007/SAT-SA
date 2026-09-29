@@ -1,0 +1,13 @@
+[
+  {
+    "case_id": "S2-CASE-0001",
+    "cse_id": "CSE-B",
+    "title": "Bulk Critical Alert Closure \u2014 S2",
+    "severity": "CRITICAL",
+    "status": "closed",
+    "opened_at": "2025-08-10T14:00:00+00:00",
+    "closed_at": "2025-08-10T14:50:00+00:00",
+    "analyst_id": "ANA-B01",
+    "linked_alert_ids": "S2-ALT-0001,S2-ALT-0002,S2-ALT-0003,S2-ALT-0004,S2-ALT-0005,S2-ALT-0006,S2-ALT-0007,S2-ALT-0008,S2-ALT-0009,S2-ALT-0010,S2-ALT-0011,S2-ALT-0012,S2-ALT-0013,S2-ALT-0014,S2-ALT-0015"
+  }
+]

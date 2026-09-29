@@ -1,0 +1,2 @@
+case_id,cse_id,title,severity,status,opened_at,closed_at,analyst_id,linked_alert_ids
+S1-CASE-0001,CSE-A,APT Campaign — External IP 203.0.113.5,CRITICAL,open,2025-08-15T02:00:00+00:00,,ANA-A01,"S1-ALT-0001,S1-ALT-0002,S1-ALT-0003,S1-ALT-0004,S1-ALT-0005,S1-ALT-0006,S1-ALT-0007,S1-ALT-0008,S1-ALT-0009,S1-ALT-0010,S1-ALT-0011,S1-ALT-0012"

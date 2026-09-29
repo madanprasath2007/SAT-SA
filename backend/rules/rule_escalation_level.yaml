@@ -1,0 +1,15 @@
+id: escalation_level_severity_match
+name: "Rule Violation: Escalation Level Mismatches Alert Severity"
+severity: HIGH
+enabled: true
+description: "CRITICAL and HIGH severity escalations must be directed to L2/L3 senior responders with recorded justification."
+parameters:
+  critical_allowed_targets:
+    - "L3"
+    - "Tier 3"
+    - "SOC Lead"
+    - "IR Team"
+    - "Senior Analyst"
+    - "CISO"
+  require_reason: true
+threshold_score: 75.0

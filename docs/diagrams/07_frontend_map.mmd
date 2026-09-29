@@ -1,0 +1,46 @@
+﻿flowchart TD
+    APP[App.tsx<br/>BrowserRouter + Routes]
+
+    subgraph Layout["Layout.tsx (Shell)"]
+        NAV[Sidebar Navigation]
+        HDR[Header + Role Switcher Pill]
+        OUT[Outlet]
+    end
+
+    subgraph Pages["Page Components"]
+        P1[OverallRiskView<br/>/ overall-risk<br/>APIs: getRiskScores, getKPIs,<br/>getPeerBenchmarks, runAnalytics]
+        P2[CseAnalysisView<br/>/cse-analysis<br/>APIs: getRiskScoreBreakdown,<br/>getFindings, getTracebackReport]
+        P3[AttackPathView<br/>/attack-path<br/>APIs: triggerTraceback,<br/>getTracebackReport, getTracebackGraph]
+        P4[KeyFindingsView<br/>/findings<br/>APIs: getFindings,<br/>getDrilldown, getFindingById]
+        P5[PeerComparisonView<br/>/peer-comparison<br/>API: getPeerBenchmarks]
+        P6[DrilldownView<br/>/drilldown<br/>APIs: getDrilldown, getTracebackReport]
+        P7[ReviewQueueView<br/>/reviews<br/>APIs: getReviewQueue,<br/>submitReview, getReviewHistory]
+        P8[FeedbackLogView<br/>/feedback<br/>APIs: getFeedbackStats,<br/>getSuggestions, approve/reject]
+        P9[ExportReportsView<br/>/export<br/>APIs: PDF URL, CSV URL, getAuditLogs]
+        P10[AdminAuditView<br/>/admin<br/>APIs: getAuditLogs,<br/>getSystemStatus, switchRole]
+        P11[UploadPage<br/>/upload<br/>APIs: ingestFile,<br/>getCseStats, getIngestStatus]
+        P12[NormalizationPage<br/>/normalization<br/>APIs: getNormalizationPreview,<br/>getRejects]
+    end
+
+    subgraph Components["Shared Components"]
+        C1[EvidenceDrawer]
+        C2[ReviewModal]
+        C3[FilterBar]
+        C4[StatCard]
+        C5[RiskBadge]
+        C6[StageCard]
+        C7[EvidenceChip]
+    end
+
+    APP --> Layout
+    Layout --> Pages
+    P4 --> C1
+    P4 --> C3
+    P6 --> C1
+    P7 --> C2
+    P1 --> C4
+    P1 --> C5
+    P2 --> C4
+    P2 --> C5
+    P3 --> C6
+    P3 --> C7

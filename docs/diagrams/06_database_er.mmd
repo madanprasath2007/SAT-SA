@@ -1,0 +1,203 @@
+﻿erDiagram
+    cses {
+        VARCHAR cse_id PK
+        VARCHAR cse_name
+        VARCHAR sector
+        VARCHAR contact_email
+    }
+    ingest_batches {
+        VARCHAR batch_id PK
+        VARCHAR cse_id FK
+        VARCHAR data_type
+        INTEGER rows_received
+        INTEGER rows_accepted
+        INTEGER rows_rejected
+        TIMESTAMP ingested_at
+    }
+    alerts {
+        VARCHAR alert_id PK
+        VARCHAR cse_id FK
+        VARCHAR batch_id FK
+        VARCHAR category
+        VARCHAR severity
+        VARCHAR severity_raw
+        TIMESTAMP created_at
+        TIMESTAMP closed_at
+        FLOAT mttr_seconds
+        TEXT closure_notes
+        VARCHAR analyst_id
+        VARCHAR asset_id
+        VARCHAR source_ip
+        VARCHAR dest_ip
+        VARCHAR status
+    }
+    cases {
+        VARCHAR case_id PK
+        VARCHAR cse_id FK
+        VARCHAR title
+        VARCHAR severity
+        VARCHAR status
+        TIMESTAMP opened_at
+        TIMESTAMP closed_at
+        VARCHAR analyst_id
+        VARCHAR linked_alert_ids
+    }
+    investigations {
+        VARCHAR investigation_id PK
+        VARCHAR cse_id FK
+        VARCHAR case_id FK
+        VARCHAR analyst_id
+        TIMESTAMP started_at
+        TIMESTAMP completed_at
+        VARCHAR outcome
+        TEXT notes
+    }
+    escalations {
+        VARCHAR escalation_id PK
+        VARCHAR cse_id FK
+        VARCHAR alert_id FK
+        VARCHAR case_id
+        VARCHAR escalated_by
+        VARCHAR escalated_to
+        TIMESTAMP escalated_at
+        TEXT reason
+        BOOLEAN resolved
+    }
+    assets {
+        VARCHAR asset_id PK
+        VARCHAR cse_id FK
+        VARCHAR asset_name
+        VARCHAR asset_type
+        VARCHAR criticality
+        VARCHAR ip_address
+        VARCHAR hostname
+        TIMESTAMP last_seen
+    }
+    entities {
+        VARCHAR entity_id PK
+        VARCHAR entity_type
+        VARCHAR identifier
+        VARCHAR cse_id FK
+        TIMESTAMP first_seen
+        TIMESTAMP last_seen
+        TEXT linked_asset_ids
+    }
+    findings {
+        VARCHAR finding_id PK
+        VARCHAR alert_id FK
+        VARCHAR cse_id FK
+        VARCHAR engine
+        VARCHAR finding_type
+        VARCHAR severity
+        FLOAT score
+        TEXT description
+        TEXT evidence
+        TIMESTAMP created_at
+    }
+    risk_scores {
+        VARCHAR cse_id PK
+        FLOAT overall_score
+        VARCHAR risk_level
+        TEXT breakdown_json
+        TIMESTAMP calculated_at
+    }
+    reviews {
+        VARCHAR review_id PK
+        VARCHAR finding_id FK
+        VARCHAR cse_id FK
+        VARCHAR reviewer
+        VARCHAR reviewer_role
+        VARCHAR decision
+        TEXT notes
+        BOOLEAN investigation_requested
+        TIMESTAMP created_at
+    }
+    feedback_logs {
+        VARCHAR log_id PK
+        VARCHAR engine
+        VARCHAR rule_id
+        TEXT suggested_change
+        TEXT justification
+        VARCHAR status
+        VARCHAR reviewed_by
+        TIMESTAMP action_taken_at
+        TIMESTAMP created_at
+    }
+    traceback_reports {
+        VARCHAR incident_id PK
+        VARCHAR cse_id FK
+        VARCHAR finding_id FK
+        VARCHAR title
+        FLOAT confidence_score
+        TEXT why_flagged
+        TEXT narrative
+        TEXT stages_json
+        TEXT ioc_matches_json
+        TEXT evidence_ids_json
+        TEXT graph_json
+        TIMESTAMP created_at
+    }
+    threat_intel_iocs {
+        VARCHAR ioc_id PK
+        VARCHAR ioc_type
+        VARCHAR ioc_value
+        VARCHAR threat_actor
+        VARCHAR malware_family
+        FLOAT confidence
+        VARCHAR mitre_tactics
+        VARCHAR mitre_techniques
+    }
+    threat_intel_bundles {
+        VARCHAR bundle_id PK
+        VARCHAR version
+        VARCHAR sha256
+        INTEGER record_count
+        VARCHAR status
+        TIMESTAMP imported_at
+    }
+    users {
+        VARCHAR user_id PK
+        VARCHAR username
+        VARCHAR email
+        VARCHAR password_hash
+        VARCHAR role
+        TIMESTAMP created_at
+    }
+    audit_logs {
+        VARCHAR log_id PK
+        VARCHAR action
+        VARCHAR user_id FK
+        VARCHAR username
+        VARCHAR role
+        VARCHAR target_entity
+        TEXT details_json
+        VARCHAR ip_address
+        TIMESTAMP timestamp
+    }
+    rejects {
+        VARCHAR reject_id PK
+        VARCHAR batch_id FK
+        VARCHAR cse_id FK
+        VARCHAR data_type
+        INTEGER row_index
+        TEXT raw_data
+        TEXT reject_reason
+        VARCHAR stage
+        TIMESTAMP rejected_at
+    }
+
+    cses ||--o{ ingest_batches : "has"
+    cses ||--o{ alerts : "has"
+    cses ||--o{ cases : "has"
+    cses ||--o{ assets : "has"
+    cses ||--o{ entities : "has"
+    cses ||--o| risk_scores : "has"
+    cses ||--o{ traceback_reports : "has"
+    ingest_batches ||--o{ rejects : "generates"
+    alerts ||--o{ escalations : "triggers"
+    alerts ||--o{ findings : "referenced by"
+    cases ||--o{ investigations : "has"
+    findings ||--o{ reviews : "reviewed by"
+    findings ||--o{ traceback_reports : "linked to"
+    users ||--o{ audit_logs : "generates"
+    threat_intel_bundles ||--o{ threat_intel_iocs : "contains"

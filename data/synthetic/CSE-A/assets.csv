@@ -1,0 +1,7 @@
+asset_id,cse_id,asset_name,asset_type,criticality,ip_address,hostname,last_seen
+SRV-APP-01,CSE-A,Application Server 01,server,CRITICAL,10.1.1.10,SRV-APP-01,2025-08-30T22:59:59+00:00
+SRV-DC-02,CSE-A,Domain Controller 02,server,CRITICAL,10.1.1.20,SRV-DC-02,2025-08-30T21:59:59+00:00
+SRV-DB-03,CSE-A,Database Server 03,server,CRITICAL,10.1.1.30,SRV-DB-03,2025-08-30T20:59:59+00:00
+SRV-FW-01,CSE-A,Perimeter Firewall,firewall,HIGH,10.1.1.1,SRV-FW-01,2025-08-30T23:59:59+00:00
+WKS-A-001,CSE-A,Workstation A001,workstation,LOW,10.1.2.10,WKS-A-001,2025-08-30T23:59:59+00:00
+WKS-A-002,CSE-A,Workstation A002,workstation,LOW,10.1.2.11,WKS-A-002,2025-08-30T23:59:59+00:00

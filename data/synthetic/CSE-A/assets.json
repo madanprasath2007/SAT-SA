@@ -1,0 +1,62 @@
+[
+  {
+    "asset_id": "SRV-APP-01",
+    "cse_id": "CSE-A",
+    "asset_name": "Application Server 01",
+    "asset_type": "server",
+    "criticality": "CRITICAL",
+    "ip_address": "10.1.1.10",
+    "hostname": "SRV-APP-01",
+    "last_seen": "2025-08-30T22:59:59+00:00"
+  },
+  {
+    "asset_id": "SRV-DC-02",
+    "cse_id": "CSE-A",
+    "asset_name": "Domain Controller 02",
+    "asset_type": "server",
+    "criticality": "CRITICAL",
+    "ip_address": "10.1.1.20",
+    "hostname": "SRV-DC-02",
+    "last_seen": "2025-08-30T21:59:59+00:00"
+  },
+  {
+    "asset_id": "SRV-DB-03",
+    "cse_id": "CSE-A",
+    "asset_name": "Database Server 03",
+    "asset_type": "server",
+    "criticality": "CRITICAL",
+    "ip_address": "10.1.1.30",
+    "hostname": "SRV-DB-03",
+    "last_seen": "2025-08-30T20:59:59+00:00"
+  },
+  {
+    "asset_id": "SRV-FW-01",
+    "cse_id": "CSE-A",
+    "asset_name": "Perimeter Firewall",
+    "asset_type": "firewall",
+    "criticality": "HIGH",
+    "ip_address": "10.1.1.1",
+    "hostname": "SRV-FW-01",
+    "last_seen": "2025-08-30T23:59:59+00:00"
+  },
+  {
+    "asset_id": "WKS-A-001",
+    "cse_id": "CSE-A",
+    "asset_name": "Workstation A001",
+    "asset_type": "workstation",
+    "criticality": "LOW",
+    "ip_address": "10.1.2.10",
+    "hostname": "WKS-A-001",
+    "last_seen": "2025-08-30T23:59:59+00:00"
+  },
+  {
+    "asset_id": "WKS-A-002",
+    "cse_id": "CSE-A",
+    "asset_name": "Workstation A002",
+    "asset_type": "workstation",
+    "criticality": "LOW",
+    "ip_address": "10.1.2.11",
+    "hostname": "WKS-A-002",
+    "last_seen": "2025-08-30T23:59:59+00:00"
+  }
+]

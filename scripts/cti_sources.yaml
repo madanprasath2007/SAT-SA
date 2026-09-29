@@ -1,0 +1,13 @@
+sources:
+  - name: "NCIIPC Critical Infrastructure Threat Advisory"
+    url: "https://nciipc.gov.in/advisories/rss.xml"
+    format: "rss"
+    default_actor: "APT-VOLT-STORM-PROXY"
+  - name: "CERT-In Sectoral Security Bulletin"
+    url: "https://cert-in.org.in/bulletins.json"
+    format: "json"
+    default_actor: "FIN-THREAT-GROUP"
+  - name: "Global CTI Infrastructure Feed"
+    url: "https://cisa.gov/feeds/kev.json"
+    format: "json"
+    default_actor: "UNKNOWN-ACTOR"

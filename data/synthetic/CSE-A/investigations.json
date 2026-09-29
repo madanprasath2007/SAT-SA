@@ -1,0 +1,12 @@
+[
+  {
+    "investigation_id": "S1-INV-0001",
+    "cse_id": "CSE-A",
+    "case_id": "S1-CASE-0001",
+    "analyst_id": "ANA-A01",
+    "started_at": "2025-08-15T03:00:00+00:00",
+    "completed_at": "",
+    "outcome": "ongoing",
+    "notes": "Initial triage complete. Attacker IP 203.0.113.5 confirmed malicious. Escalated to Tier-3."
+  }
+]

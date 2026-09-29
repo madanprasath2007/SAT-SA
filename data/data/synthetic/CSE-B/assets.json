@@ -1,0 +1,72 @@
+[
+  {
+    "asset_id": "BANK-SRV-01",
+    "cse_id": "CSE-B",
+    "asset_name": "Banking Server 01",
+    "asset_type": "server",
+    "criticality": "CRITICAL",
+    "ip_address": "172.16.1.1",
+    "hostname": "BANK-SRV-01",
+    "last_seen": "2025-08-30T23:59:59+00:00"
+  },
+  {
+    "asset_id": "BANK-SRV-02",
+    "cse_id": "CSE-B",
+    "asset_name": "Banking Server 02",
+    "asset_type": "server",
+    "criticality": "CRITICAL",
+    "ip_address": "172.16.1.2",
+    "hostname": "BANK-SRV-02",
+    "last_seen": "2025-08-30T23:59:59+00:00"
+  },
+  {
+    "asset_id": "BANK-SRV-03",
+    "cse_id": "CSE-B",
+    "asset_name": "Banking Server 03",
+    "asset_type": "server",
+    "criticality": "CRITICAL",
+    "ip_address": "172.16.1.3",
+    "hostname": "BANK-SRV-03",
+    "last_seen": "2025-08-30T23:59:59+00:00"
+  },
+  {
+    "asset_id": "BANK-SRV-04",
+    "cse_id": "CSE-B",
+    "asset_name": "Banking Server 04",
+    "asset_type": "server",
+    "criticality": "HIGH",
+    "ip_address": "172.16.1.4",
+    "hostname": "BANK-SRV-04",
+    "last_seen": "2025-08-30T23:59:59+00:00"
+  },
+  {
+    "asset_id": "BANK-SRV-05",
+    "cse_id": "CSE-B",
+    "asset_name": "Banking Server 05",
+    "asset_type": "server",
+    "criticality": "HIGH",
+    "ip_address": "172.16.1.5",
+    "hostname": "BANK-SRV-05",
+    "last_seen": "2025-08-30T23:59:59+00:00"
+  },
+  {
+    "asset_id": "BANK-ATM-01",
+    "cse_id": "CSE-B",
+    "asset_name": "ATM Controller 01",
+    "asset_type": "controller",
+    "criticality": "CRITICAL",
+    "ip_address": "172.16.2.1",
+    "hostname": "BANK-ATM-01",
+    "last_seen": "2025-08-30T23:59:59+00:00"
+  },
+  {
+    "asset_id": "BANK-DB-01",
+    "cse_id": "CSE-B",
+    "asset_name": "Core Banking DB",
+    "asset_type": "database",
+    "criticality": "CRITICAL",
+    "ip_address": "172.16.1.100",
+    "hostname": "BANK-DB-01",
+    "last_seen": "2025-08-30T23:59:59+00:00"
+  }
+]

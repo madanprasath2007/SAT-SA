@@ -1,0 +1,8 @@
+id: critical_alert_escalation
+name: "Rule Violation: Unescalated Critical Alert"
+severity: CRITICAL
+enabled: true
+description: "Critical severity alerts must be escalated to Tier 2/3 responders within {max_minutes} minutes."
+parameters:
+  max_minutes: 60
+threshold_score: 90.0

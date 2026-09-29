@@ -1,0 +1,9 @@
+id: sop_steps_present
+name: "Rule Violation: Investigation Missing Mandatory SOP Steps"
+severity: MEDIUM
+enabled: true
+description: "Investigations must document SOP containment and triage steps rather than brief dismissal."
+parameters:
+  min_chars: 20
+  required_keywords: []
+threshold_score: 60.0

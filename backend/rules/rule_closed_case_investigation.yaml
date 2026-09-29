@@ -1,0 +1,8 @@
+id: closed_case_investigation_notes
+name: "Rule Violation: Closed Case Lacks Investigation Notes"
+severity: HIGH
+enabled: true
+description: "Closed security cases must have at least one completed investigation record with substantive notes."
+parameters:
+  min_note_length: 15
+threshold_score: 80.0

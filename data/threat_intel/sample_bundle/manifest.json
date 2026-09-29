@@ -1,0 +1,8 @@
+{
+  "created_at": "2026-09-28T04:06:53.560113+00:00",
+  "cve_count": 3,
+  "ioc_count": 4,
+  "record_count": 7,
+  "sha256": "56e110c698e4e78f8c54466c32d7bec29f40a5507632b1b7cdd66f05708a07f1",
+  "version": "1.0.0"
+}

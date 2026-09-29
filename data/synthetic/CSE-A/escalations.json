@@ -1,0 +1,13 @@
+[
+  {
+    "escalation_id": "S1-ESC-0001",
+    "cse_id": "CSE-A",
+    "alert_id": "S1-ALT-0005",
+    "case_id": "S1-CASE-0001",
+    "escalated_by": "ANA-A01",
+    "escalated_to": "TIER3-LEAD",
+    "escalated_at": "2025-08-15T04:00:00+00:00",
+    "reason": "Confirmed lateral movement across 3 servers from external attacker.",
+    "resolved": "false"
+  }
+]

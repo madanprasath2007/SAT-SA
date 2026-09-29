@@ -1,0 +1,65 @@
+version: '3.9'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: satsa-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - DB_PATH=/app/data/sat_sa.duckdb
+      - JWT_SECRET_KEY=satsa_airgap_secret_supervisory_key_2026
+      - OLLAMA_BASE_URL=http://ollama:11434
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: satsa-frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Optional: Local Ollama container for air-gapped on-prem LLM inference
+  ollama:
+    image: ollama/ollama:latest
+    container_name: satsa-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-models:/root/.ollama
+    profiles:
+      - ai
+      - llm
+    restart: unless-stopped
+
+  # Optional: Database seed runner
+  seed:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: satsa-seed
+    volumes:
+      - ./data:/app/data
+      - ./scripts:/app/scripts
+    environment:
+      - DB_PATH=/app/data/sat_sa.duckdb
+    command: python /app/scripts/seed_demo.py
+    profiles:
+      - seed
+
+volumes:
+  ollama-models:

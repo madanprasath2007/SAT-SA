@@ -1,0 +1,82 @@
+{
+  "bundle_id": "5a35e52a-3df7-4428-a189-582e68294fb8",
+  "created_at": "2026-09-28T04:06:53.560113+00:00",
+  "cves": [
+    {
+      "affected_products": "Windows Server / Critical Infrastructure Services",
+      "cve_id": "CVE-2024-38077",
+      "cvss_score": 9.8,
+      "description": "Vulnerability CVE-2024-38077 exploited by APT-VOLT-STORM-PROXY referenced in NCIIPC-Advisory-Fixture",
+      "published_date": "2026-09-28T04:06:53.560113+00:00"
+    },
+    {
+      "affected_products": "Windows Server / Critical Infrastructure Services",
+      "cve_id": "CVE-2024-21413",
+      "cvss_score": 8.5,
+      "description": "Vulnerability CVE-2024-21413 exploited by APT-VOLT-STORM-PROXY referenced in NCIIPC-Advisory-Fixture",
+      "published_date": "2026-09-28T04:06:53.560113+00:00"
+    },
+    {
+      "affected_products": "Windows Server / Critical Infrastructure Services",
+      "cve_id": "CVE-2023-38831",
+      "cvss_score": 8.5,
+      "description": "Vulnerability CVE-2023-38831 exploited by APT-VOLT-STORM-PROXY referenced in NCIIPC-Advisory-Fixture",
+      "published_date": "2026-09-28T04:06:53.560113+00:00"
+    }
+  ],
+  "iocs": [
+    {
+      "confidence": 0.95,
+      "description": "External pivot IP extracted from NCIIPC-Advisory-Fixture",
+      "first_seen": "2026-09-28T04:06:53.560113+00:00",
+      "ioc_id": "6c7c44f2-d10d-465e-9085-56532272f868",
+      "ioc_type": "ip",
+      "ioc_value": "203.0.113.5",
+      "malware_family": "Custom WebShell / RDP Proxy",
+      "mitre_tactics": "TA0001,TA0004,TA0008,TA0009,TA0005",
+      "mitre_techniques": "T1078,T1068,T1021.001,T1005,T1070",
+      "source": "NCIIPC-Advisory-Fixture",
+      "threat_actor": "APT-VOLT-STORM-PROXY"
+    },
+    {
+      "confidence": 0.85,
+      "description": "Adversary infrastructure domain extracted from NCIIPC-Advisory-Fixture",
+      "first_seen": "2026-09-28T04:06:53.560113+00:00",
+      "ioc_id": "62f530ea-9fcb-4870-b256-4efd25c533be",
+      "ioc_type": "domain",
+      "ioc_value": "c2-control-telecom.xyz",
+      "malware_family": "C2 Infrastructure",
+      "mitre_tactics": "TA0011",
+      "mitre_techniques": "T1071",
+      "source": "NCIIPC-Advisory-Fixture",
+      "threat_actor": "APT-VOLT-STORM-PROXY"
+    },
+    {
+      "confidence": 0.85,
+      "description": "Adversary infrastructure domain extracted from NCIIPC-Advisory-Fixture",
+      "first_seen": "2026-09-28T04:06:53.560113+00:00",
+      "ioc_id": "696aab0b-a639-47e3-b9f3-841c24d3c711",
+      "ioc_type": "domain",
+      "ioc_value": "updates-service-auth.top",
+      "malware_family": "C2 Infrastructure",
+      "mitre_tactics": "TA0011",
+      "mitre_techniques": "T1071",
+      "source": "NCIIPC-Advisory-Fixture",
+      "threat_actor": "APT-VOLT-STORM-PROXY"
+    },
+    {
+      "confidence": 0.9,
+      "description": "Malicious binary hash from NCIIPC-Advisory-Fixture",
+      "first_seen": "2026-09-28T04:06:53.560113+00:00",
+      "ioc_id": "26bfd0f4-df4e-4067-b51a-663b2aaaaddb",
+      "ioc_type": "hash_sha256",
+      "ioc_value": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "malware_family": "Backdoor Dropper",
+      "mitre_tactics": "TA0002",
+      "mitre_techniques": "T1059",
+      "source": "NCIIPC-Advisory-Fixture",
+      "threat_actor": "APT-VOLT-STORM-PROXY"
+    }
+  ],
+  "version": "1.0.0"
+}

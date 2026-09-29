@@ -1,0 +1,43 @@
+﻿flowchart LR
+    subgraph Cluster["NetworkX Alert Correlation Graph"]
+        A1[Alert: Suspicious Login<br/>src_ip: 192.168.1.50<br/>asset: SRV-01]
+        A2[Alert: Privilege Escalation<br/>src_ip: 192.168.1.50<br/>asset: SRV-01]
+        A3[Alert: Lateral Movement<br/>src_ip: SRV-01<br/>asset: DB-02]
+        A4[Alert: File Access<br/>asset: DB-02]
+        A5[Alert: Log Tampering<br/>asset: SRV-01]
+        IP1[IP: 192.168.1.50<br/>CTI MATCH: APT29]
+        ASSET1[Asset: SRV-01]
+        ASSET2[Asset: DB-02]
+
+        A1 -->|sequence| A2
+        A2 -->|sequence| A3
+        A3 -->|sequence| A4
+        A1 -->|inbound_traffic| IP1
+        A2 -->|inbound_traffic| IP1
+        A1 -->|impacts_asset| ASSET1
+        A2 -->|impacts_asset| ASSET1
+        A3 -->|impacts_asset| ASSET2
+        A4 -->|impacts_asset| ASSET2
+        A5 -->|impacts_asset| ASSET1
+    end
+
+    subgraph Stages["MITRE ATT&CK Stages"]
+        S1[Stage 1: Initial Access<br/>TA0001 T1078<br/>confidence: 0.95]
+        S2[Stage 2: Privilege Escalation<br/>TA0004 T1068<br/>confidence: 0.90]
+        S3[Stage 3: Lateral Movement<br/>TA0008 T1021.001<br/>confidence: 0.85]
+        S4[Stage 4: Data Access<br/>TA0009 T1005<br/>confidence: 0.80]
+        S5[Stage 5: Evidence Tampering<br/>TA0005 T1070<br/>confidence: 0.85]
+        S1 --> S2 --> S3 --> S4 --> S5
+    end
+
+    subgraph LLM["LLM Narrative Generation"]
+        PROMPT[Evidence Prompt<br/>real alert_ids + review context]
+        GEN[MockLLM / OllamaLLM<br/>generate narrative]
+        VERIFY[verify_llm_claims<br/>strip hallucinated IDs]
+        REPORT[traceback_reports table<br/>stages_json, graph_json, narrative]
+        PROMPT --> GEN --> VERIFY --> REPORT
+    end
+
+    Cluster -->|connected components| Stages
+    Stages --> PROMPT
+    REPORT -->|React Flow JSON| FE[Frontend<br/>Attack Path View]
