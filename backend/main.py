@@ -63,6 +63,12 @@ def get_dashboard():
     return {"status": "operational", "system": "SAT-SA", "version": "1.1.0", "phase": 1}
 
 
+@app.on_event("startup")
+def on_startup():
+    from models import init_db
+    init_db()
+
+
 @app.get("/api/health")
 def health_check():
     return {"status": "operational", "system": "SAT-SA", "version": "1.1.0", "phase": 1}

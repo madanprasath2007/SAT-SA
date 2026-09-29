@@ -7,7 +7,7 @@ DuckDB DDL (no ORM needed for embedded analytics store).
 import duckdb
 import os
 
-DB_PATH = os.environ.get("DB_PATH", "./data/sat_sa.duckdb")
+DB_PATH = os.environ.get("DB_PATH", "/tmp/sat_sa.duckdb" if os.environ.get("VERCEL") else "./data/sat_sa.duckdb")
 _SHARED_CONNS = {}
 
 
