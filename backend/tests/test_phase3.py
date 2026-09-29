@@ -31,9 +31,9 @@ from threat_intel.importer import (
     seed_sample_threat_intel,
     verify_bundle_checksum,
 )
-from traceback.correlate import build_event_graph, graph_to_react_flow
-from traceback.path import cluster_candidate_incidents, build_attack_path
-from traceback.service import run_attack_traceback
+from attack_traceback.correlate import build_event_graph, graph_to_react_flow
+from attack_traceback.path import cluster_candidate_incidents, build_attack_path
+from attack_traceback.service import run_attack_traceback
 from llm.client import MockLLM, OllamaLLM, get_llm_client
 from llm.verifier import verify_llm_claims
 from engines.risk_scoring import calculate_cse_risk, update_risk_scores

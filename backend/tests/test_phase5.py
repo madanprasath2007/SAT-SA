@@ -25,7 +25,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 from main import app
 from models import get_connection, init_db, seed_cses, seed_users
 from routers.analytics import run_analytics
-from traceback.service import run_attack_traceback
+from attack_traceback.service import run_attack_traceback
 
 BACKEND_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 REPO_ROOT = os.path.abspath(os.path.join(BACKEND_DIR, ".."))

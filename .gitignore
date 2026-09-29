@@ -67,3 +67,5 @@ htmlcov/
 *.sublime-workspace
 .DS_Store
 Thumbs.db
+
+.vercel

@@ -2,26 +2,16 @@
 SAT-SA Backend — Main FastAPI Application (Phase 1)
 Supervisory Analytics Tool for SOC Assessment
 NCIIPC / NTRO — Air-Gapped Deployment
-"""
+"""  # noqa: D205
 
 import os
-import sys
-import traceback
-
-_backend_dir = os.path.dirname(os.path.abspath(__file__))
-_tb_dir = os.path.join(_backend_dir, "traceback")
-if os.path.isdir(_tb_dir):
-    if not hasattr(traceback, "__path__"):
-        traceback.__path__ = [_tb_dir]
-    elif _tb_dir not in traceback.__path__:
-        traceback.__path__.append(_tb_dir)
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 
 # Import routers
-from routers import ingest, analytics, dashboard, threat_intel, traceback, review, auth, export, admin, feedback
+from routers import ingest, analytics, dashboard, threat_intel, traceback as traceback_router, review, auth, export, admin, feedback
 
 app = FastAPI(
     title="SAT-SA: Supervisory Analytics Tool for SOC Assessment",
@@ -42,7 +32,7 @@ app.include_router(ingest.router,       prefix="/api/ingest",       tags=["Data 
 app.include_router(analytics.router,    prefix="/api/analytics",    tags=["Analytics"])
 app.include_router(dashboard.router,    prefix="/api/dashboard",    tags=["Dashboard"])
 app.include_router(threat_intel.router, prefix="/api/threat-intel", tags=["Threat Intelligence"])
-app.include_router(traceback.router,    prefix="/api/traceback",    tags=["Attack Traceback"])
+app.include_router(traceback_router.router, prefix="/api/traceback",    tags=["Attack Traceback"])
 app.include_router(review.router,       prefix="/api/reviews",      tags=["Human Review & Feedback"])
 app.include_router(feedback.router,     prefix="/api/feedback",     tags=["Feedback Loop & Rule Tuning"])
 app.include_router(auth.router,         prefix="/api/auth",         tags=["Authentication & RBAC"])

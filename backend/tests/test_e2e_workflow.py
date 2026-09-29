@@ -27,7 +27,7 @@ from models import get_connection, init_db, seed_cses, seed_users
 from pipeline.orchestrator import run_pipeline
 from threat_intel.importer import seed_sample_threat_intel
 from routers.analytics import run_analytics
-from traceback.service import run_attack_traceback
+from attack_traceback.service import run_attack_traceback
 
 E2E_DB = os.path.join(REPO_ROOT, "data", "test_e2e_s1.duckdb")
 

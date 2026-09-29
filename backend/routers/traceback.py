@@ -10,7 +10,7 @@ from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel
 
 from models import get_connection
-from traceback.service import run_attack_traceback
+from attack_traceback.service import run_attack_traceback
 
 router = APIRouter()
 

@@ -18,20 +18,12 @@ REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 BACKEND_DIR = os.path.join(REPO_ROOT, "backend")
 sys.path.insert(0, BACKEND_DIR)
 
-# Handle traceback name collision if present
-_tb_dir = os.path.join(BACKEND_DIR, "traceback")
-if os.path.isdir(_tb_dir):
-    import traceback
-    if not hasattr(traceback, "__path__"):
-        traceback.__path__ = [_tb_dir]
-    elif _tb_dir not in traceback.__path__:
-        traceback.__path__.append(_tb_dir)
 
 from models import init_db, get_connection, seed_cses, seed_users, DB_PATH
 from pipeline.orchestrator import run_pipeline
 from threat_intel.importer import seed_sample_threat_intel
 from routers.analytics import run_analytics
-from traceback.service import run_attack_traceback
+from attack_traceback.service import run_attack_traceback
 from audit import log_audit
 
 
