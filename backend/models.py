@@ -11,8 +11,31 @@ DB_PATH = os.environ.get("DB_PATH", "/tmp/sat_sa.duckdb" if os.environ.get("VERC
 _SHARED_CONNS = {}
 
 
+def _prepare_db_file(target_path: str):
+    """Ensure pre-seeded demo database is copied to writable /tmp on Vercel or ephemeral platforms."""
+    if os.environ.get("VERCEL") or target_path.startswith("/tmp"):
+        if not os.path.exists(target_path) or os.path.getsize(target_path) < 100000:
+            bundled_candidates = [
+                os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "sat_sa.duckdb"),
+                os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "data", "sat_sa.duckdb"),
+                os.path.abspath("./data/sat_sa.duckdb"),
+                os.path.abspath("./backend/data/sat_sa.duckdb"),
+            ]
+            for bp in bundled_candidates:
+                if os.path.exists(bp) and os.path.getsize(bp) > 100000:
+                    import shutil
+                    os.makedirs(os.path.dirname(target_path), exist_ok=True)
+                    try:
+                        shutil.copyfile(bp, target_path)
+                    except Exception:
+                        pass
+                    break
+
+
 def get_connection(db_path: str = None) -> duckdb.DuckDBPyConnection:
     target_path = db_path or os.environ.get("DB_PATH", DB_PATH)
+    if target_path != ":memory:":
+        _prepare_db_file(target_path)
     target_dir = os.path.dirname(target_path)
     if target_dir:
         os.makedirs(target_dir, exist_ok=True)

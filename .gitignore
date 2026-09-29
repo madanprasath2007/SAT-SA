@@ -37,6 +37,7 @@ venv.bak/
 *.db
 *.sqlite
 *.sqlite3
+!backend/data/sat_sa.duckdb
 
 # Node / Frontend
 node_modules/
